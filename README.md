@@ -8,8 +8,8 @@ the ST-link V2 firmware and run the jar file for a GUI to launch and update it.
 
 Second step:
 Simple debug options:
-1. FTDI: in linux, to check to what tty are you connected to, run: dmesg | grep tty
+1. FTDI: in linux, to check to what tty you are connected to, run: dmesg | grep tty
                    to see incomming bytes run: sudo screen /dev/ttyS0 115200
-                   NB: a program like PyTTy can be used too.
-
+                   for an interactive serial terminal I prefer to use Moserial which can 
+                   be installed via: sudo apt install moserial
 
