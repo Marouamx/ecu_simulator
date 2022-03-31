@@ -107,3 +107,21 @@ int main(void)
 Filters are another game changing property in the CAN module of STM32  
 it allows the receiver to "filter" the incoming data from the CAN bus and only select certain dataframes.
 
+```C
+ CAN_FilterTypeDef canfilterconfig; //config module of the filter structure
+
+  canfilterconfig.FilterActivation = CAN_FILTER_ENABLE; //ofc enabling the filtering option
+  canfilterconfig.FilterBank = 18;  // for this specific filter, which filter bank to use from the assigned ones, in CAN1 below (20) 
+  canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+  canfilterconfig.FilterIdHigh = 0x446<<5; /*here is the ID of the can transimitter that we are expecting data from(shift by 5 bits since we are only 	     considering the STD ID not the extended one) */
+  canfilterconfig.FilterIdLow = 0;
+  canfilterconfig.FilterMaskIdHigh = 0x446<<5;
+  canfilterconfig.FilterMaskIdLow = 0x0000;
+  canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  canfilterconfig.SlaveStartFilterBank = 20;  // how many filters to assign to the CAN1, up to 28 filter banks
+
+  HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
+
+```
+
