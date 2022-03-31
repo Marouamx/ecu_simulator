@@ -107,7 +107,7 @@ int main(void)
 
 ### FILTERS
 
-Filters are another game changing property in the CAN module of STM32  
+Filters are another cool property in the CAN module.
 it allows the receiver to "filter" the incoming data from the CAN bus and only select certain dataframes.
 
 ```C
