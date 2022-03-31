@@ -115,7 +115,7 @@ it allows the receiver to "filter" the incoming data from the CAN bus and only s
   canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
   canfilterconfig.FilterIdHigh = 0x446<<5; /*here is the ID of the can transimitter that we are expecting data from(shift by 5 bits since we are only 	     considering the STD ID not the extended one) */
   canfilterconfig.FilterIdLow = 0;
-  canfilterconfig.FilterMaskIdHigh = 0x446<<5;
+  canfilterconfig.FilterMaskIdHigh = 0x446<<5; 
   canfilterconfig.FilterMaskIdLow = 0x0000;
   canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
   canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -124,4 +124,4 @@ it allows the receiver to "filter" the incoming data from the CAN bus and only s
   HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
 
 ```
-
+To configure the second board: just change the std id of the board to 0x446 and in the filter configuration section change the expeted transmitter ID to 0x103
