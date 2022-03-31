@@ -27,7 +27,8 @@ Ps: activate the interrupt0 of the CAN_rx pin
 The CAN HAL driver layer provides a simple, generic multi-instance set of APIs to control the CAN peripheral
 thus we will have only to change some bitfields, others are there by default.
 
-Main objective: be able to send a CAN dataframe from an end by an external interrup (user push botton) and receive it by the other end (CAN_rx is also configured to interrupt)
+Main objective: be able to send a CAN dataframe from an end by an external interrupt (user push botton) and receive it by the other end.
+the datafame contains information on how many times and in what frequency you blink an LED
 
 (code explained by comments bellow)
 
