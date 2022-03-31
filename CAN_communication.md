@@ -9,3 +9,8 @@ Connect both boards by CANH, CANL, GND and the circuit is done.
 
 ![image](https://user-images.githubusercontent.com/62667666/161021021-5ea8f341-3108-4872-90d3-bb9954cf804d.png)
 
+The configuration on CubeMx: 
+(assuming the basic congif like RCC, SWD .. is already done)
+1. CAN_tx and CAN_rx on PD0, PD1 that are connected to the trancevier on the board
+2. GPIO External interrupt (push button on the board is PA0)
+3. GPIO output for the LED (PD12)
