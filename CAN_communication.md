@@ -14,3 +14,5 @@ The configuration on CubeMx:
 1. CAN_tx and CAN_rx on PD0, PD1 that are connected to the trancevier on the board
 2. GPIO External interrupt (push button on the board is PA0)
 3. GPIO output for the LED (PD12)
+  
+Ps: activate the interrupt0 of the CAN_rx pin
