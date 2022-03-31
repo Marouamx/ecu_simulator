@@ -16,3 +16,15 @@ The configuration on CubeMx:
 3. GPIO output for the LED (PD12)
   
 Ps: activate the interrupt0 of the CAN_rx pin
+
+### Standard CAN Frame
+
+![image](https://user-images.githubusercontent.com/62667666/161023649-1d04a21a-e36d-40f1-9159-9d4bc02ee92c.png)
+
+
+### code part
+
+The CAN HAL driver layer provides a simple, generic multi-instance set of APIs to control the CAN peripheral
+thus we will have only to change some bitfields, others are there by default.
+
+
