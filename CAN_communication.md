@@ -27,6 +27,8 @@ Ps: activate the interrupt0 of the CAN_rx pin
 The CAN HAL driver layer provides a simple, generic multi-instance set of APIs to control the CAN peripheral
 thus we will have only to change some bitfields, others are there by default.
 
+(code explained by comments bellow)
+
 ```C
 CAN_TxHeaderTypeDef TxHeader; //CAN Tx message header structure definition
 CAN_RxHeaderTypeDef RxHeader; //CAN Rx message header structure definition
@@ -101,3 +103,7 @@ int main(void)
 ```
 
 ### FILTERS
+
+Filters are another game changing property in the CAN module of STM32  
+it allows the receiver to "filter" the incoming data from the CAN bus and only select certain dataframes.
+
