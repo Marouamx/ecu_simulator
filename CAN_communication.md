@@ -28,3 +28,73 @@ The CAN HAL driver layer provides a simple, generic multi-instance set of APIs t
 thus we will have only to change some bitfields, others are there by default.
 
 
+CAN_TxHeaderTypeDef TxHeader; //CAN Tx message header structure definition
+CAN_RxHeaderTypeDef RxHeader; //CAN Rx message header structure definition
+
+uint8_t TxData[8]; //data to be transmitted max 8 bytes
+uint8_t RxData[8]; // data to be received max: 8 bytes
+
+uint32_t TxMailbox; // whole CAN dataframe
+
+int datacheck = 0; //just a flag
+//EXTI interrupt request when user presses the button -> sends the message via CAN
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == GPIO_PIN_0)
+	{
+		TxData[0] = 100;   // ms Delay
+		TxData[1] = 40;    // loop rep
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+	}
+}
+//EXTI interrupt request when user presses the button -> sends the message via CAN
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
+	if (RxHeader.DLC == 2) //checks first if length of data matches
+	{
+		datacheck = 1;
+	}
+}
+
+int main(void)
+{
+  HAL_Init();
+
+  SystemClock_Config();
+
+  MX_GPIO_Init();
+  MX_CAN1_Init();
+  MX_USART2_UART_Init();
+
+
+
+  HAL_CAN_Start(&hcan1);
+
+   // Activate the notification
+   HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+
+
+   TxHeader.DLC = 2;  // data length
+   TxHeader.IDE = CAN_ID_STD; //use only std IDE ignore the extended one
+   TxHeader.RTR = CAN_RTR_DATA; //std
+   TxHeader.StdId = 0x103;  // ID
+
+
+   while (1)
+   {
+ 	  if (datacheck)
+ 	  {
+ 		  // blink the LED
+ 		  for (int i=0; i<RxData[1]; i++) //RxData[1] contains the number of blinks
+ 		  {
+ 			  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 			  HAL_Delay(RxData[0]); //RxData[0] contains the delay between two blinks
+ 		  }
+
+ 		  datacheck = 0;
+
+ 	  }
+   }
+ }
