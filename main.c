@@ -116,14 +116,14 @@ int main(void)
    TxHeader.DLC = 8;  // data length
    TxHeader.IDE = CAN_ID_STD; //use only std IDE ignore the extended one
    TxHeader.RTR = CAN_RTR_DATA; //std
-   TxHeader.StdId = 0x103;  // ID
+   TxHeader.StdId = 0x446;  // ID
 
     HAL_UART_Transmit(&huart2, "about to enter while loop\n", sizeof("about to enter while loop\n"), 100);
 
    while (1)
    {
-	   send_tram_over_CAN();
-	   HAL_Delay(200);
+	   //send_tram_over_CAN();
+	   //HAL_Delay(50);
 
    }
    /* USER CODE END 3 */
@@ -209,9 +209,9 @@ static void MX_CAN1_Init(void)
   canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
   canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
   canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-  canfilterconfig.FilterIdHigh = 0x446<<5;
+  canfilterconfig.FilterIdHigh = 0x103<<5;
   canfilterconfig.FilterIdLow = 0;
-  canfilterconfig.FilterMaskIdHigh = 0x446<<5;
+  canfilterconfig.FilterMaskIdHigh = 0x103<<5;
   canfilterconfig.FilterMaskIdLow = 0x0000;
   canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
   canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
