@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include"string.h"
 
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
@@ -25,27 +25,249 @@ uint8_t TxData[8]; //data to be transmitted max 8 bytes
 uint8_t RxData[8]; // data to be received max: 8 bytes
 
 uint32_t TxMailbox; // whole CAN dataframe
+char text[] = "CAR-4\r04/12/2021_12:23:22 1.232 34.31234 12 1200 88 1321 44 0\n";
+char *text_Ptr;
+char buffer[100];
+char *buffer_Ptr;
 
-int datacheck = 0; //just a flag
-//EXTI interrupt request when user presses the button -> sends the message via CAN
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	if (GPIO_Pin == GPIO_PIN_0)
-	{
-		TxData[0] = 100;   // ms Delay
-		TxData[1] = 40;    // loop rep
+int datacheck = 0;
+
+struct recevied_struct{
+	uint32_t OBD_Header;
+	uint8_t PID_len;
+	uint8_t mode;
+	uint16_t PID;
+
+} recevied_frame;
+
+
+void send_tram_over_CAN() {
+
+	HAL_UART_Transmit(&huart2, "sent:\n", sizeof("sent\n"), 100);
+
+			text_Ptr = text;
+
+			while(*text_Ptr != '\0') {
+				for (int i = 0; i < 8 ; i++) {
+					TxData[i] = (uint8_t) *text_Ptr;
+					text_Ptr ++;
+				}
+				HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+				HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+			}
+}
+void engine_coolant_temp() {
+
+			TxData[0] = 0x03; // length of data + mode
+			TxData[1] = 0x41; // 41 is like mode + 40H
+			TxData[2] = 0x05; // PID replying to
+			TxData[3] = 0x76; // data0
+			TxData[4] = 0x55; // data1
+			TxData[5] = 0x55;
+			TxData[6] = 0x55;
+			TxData[7] = 0x55;
+
+			HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+			//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void SupportedPID() {
+	// Idk why or how it works but this is the response to 0100 which sets the protocol 2 to OBD
+			TxData[0] = 0x01;
+			TxData[1] = 0x02;
+			TxData[2] = 0x03;
+			TxData[3] = 0x04;
+			TxData[4] = 0x05;
+			TxData[5] = 0x06;
+			TxData[6] = 0x07;
+			TxData[7] = 0x08;
+
+			HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+			//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void fuel_system_status() {
+
+	    TxData[0] = 0x04; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x03; // PID replying to
+		TxData[3] = 0x08; // data0
+		TxData[4] = 0x08; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
 
 		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-	}
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void engine_load_value() {
+
+	    TxData[0] = 0x03; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x04; // PID replying to
+		TxData[3] = 0x28; // data0
+		TxData[4] = 0x55; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void fuel_pressure() {
+
+	    TxData[0] = 0x03; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x0A; // PID replying to
+		TxData[3] = 0x55; // data0
+		TxData[4] = 0x55; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void abs_pressure() {
+
+	    TxData[0] = 0x03; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x0B; // PID replying to
+		TxData[3] = 0xFF; // data0
+		TxData[4] = 0x55; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void engine_rpm() {
+
+	    TxData[0] = 0x04; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x0C; // PID replying to
+		TxData[3] = 0xFA; // data0
+		TxData[4] = 0x00; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void vehicule_speed() {
+
+	    TxData[0] = 0x03; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x0D; // PID replying to
+		TxData[3] = 0x64; // data0
+		TxData[4] = 0x55; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+}
+void intake_air_temperature() {
+
+	    TxData[0] = 0x03; // length of data + mode
+		TxData[1] = 0x41; // 41 is like mode + 40H
+		TxData[2] = 0x0F; // PID replying to
+		TxData[3] = 0x00; // data0
+		TxData[4] = 0x55; // data1
+		TxData[5] = 0x55;
+		TxData[6] = 0x55;
+		TxData[7] = 0x55;
+
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
 }
 //EXTI interrupt request when user presses the button -> sends the message via CAN
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if (GPIO_Pin == GPIO_PIN_0){
+		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+		HAL_UART_Transmit(&huart2, "\n Hex sent: \n", sizeof("\n Hex sent: \n"), 100); //start rec
+		HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+	}
+}
+
+void ECU_send_response (){
+
+	if (recevied_frame.mode == 0x1)
+		switch(recevied_frame.PID) {
+			case 0x00:
+				SupportedPID();
+				break;
+			case 0x03:
+				fuel_system_status(); //bit encoded
+				break;
+			case 0x04:
+				engine_load_value(); //0   100     %  A*100/255
+				break;
+			case 0x05:
+				engine_coolant_temp(); // -40 	215 	°C  	A-40
+				break;
+			case 0x0A:
+			 	fuel_pressure(); // 0 	765 	kPa (gauge)   A*3
+				break;
+			case 0x0B:
+				abs_pressure(); // 0 	255 	kPa (absolute) 	 A
+				break;
+			case 0x0C:
+				engine_rpm(); // 	0 	16,383.75 	rpm    ((A*256)+B)/4
+				break;
+			case 0x0D:
+				vehicule_speed(); // 	0 	255 	km/h    A
+				break;
+			case 0x0F:
+				intake_air_temperature(); // 	-40 	215 	°C  	A-40
+				break;
+		}
+}
+
+
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
-	if (RxHeader.DLC == 2) //checks first if length of data matches
-	{
-		datacheck = 1;
-	}
+
+	//get buffer data
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData); // get first 8 bytes
+
+	// load receiving structure
+	recevied_frame.OBD_Header = RxHeader.StdId;
+	recevied_frame.PID_len = RxData[0];
+	recevied_frame.mode = RxData[1];
+	if (recevied_frame.mode != 0x5) recevied_frame.PID = RxData[2];
+	else recevied_frame.PID =  RxData[2] << 8 | RxData[3]; // shift higher bits
+
+	//next line just for debugging purposes -- print hex directly
+	HAL_UART_Transmit(&huart2, "\nreceiving: \n", sizeof("\nreceiving: \n"), 100); //start rec
+	sprintf(buffer,"%02X %02X %02X %02X %02X %02X %02X %02X", RxData[0], RxData[1], RxData[2], RxData[3], RxData[5], RxData[6], RxData[7], RxData[8]);
+	HAL_UART_Transmit(&huart2, buffer, 32, 100); //print em
+	HAL_UART_Transmit(&huart2, "\n by: ", sizeof("\n by: "), 100); //start rec
+	sprintf(buffer, "%X",recevied_frame.OBD_Header);
+	HAL_UART_Transmit(&huart2,buffer, 4, 100);
+	sprintf(buffer, "\n PID length is %X and mode is %X \n DATA is:",recevied_frame.PID_len,recevied_frame.mode);
+	HAL_UART_Transmit(&huart2,buffer, sizeof("\n PID length is X and mode is X \n DATA is:"), 100); //print em
+	sprintf(buffer,"%04X", recevied_frame.PID);
+	HAL_UART_Transmit(&huart2,buffer, 4, 100); //print em
+
+
+	// send response to OBD accordingly
+	ECU_send_response();
+
+
+	memset(buffer, 0, sizeof(buffer));
+	memset(RxData, 0, 8*sizeof(*RxData)); //flush rx buffer
+
 }
 
 int main(void)
@@ -57,37 +279,26 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_USART2_UART_Init();
-
-
-
   HAL_CAN_Start(&hcan1);
 
    // Activate the notification
    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
 
-   TxHeader.DLC = 2;  // data length
+   TxHeader.DLC = 8;  // data length
    TxHeader.IDE = CAN_ID_STD; //use only std IDE ignore the extended one
    TxHeader.RTR = CAN_RTR_DATA; //std
-   TxHeader.StdId = 0x103;  // ID
+   TxHeader.StdId = 0x7E8;  // ID of ECU -- really important
 
+   HAL_UART_Transmit(&huart2, "about to enter while loop\n", sizeof("about to enter while loop\n"), 100);
 
    while (1)
    {
- 	  if (datacheck)
- 	  {
- 		  // blink the LED
- 		  for (int i=0; i<RxData[1]; i++) //RxData[1] contains the number of blinks
- 		  {
- 			  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
- 			  HAL_Delay(RxData[0]); //RxData[0] contains the delay between two blinks
- 		  }
+	//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
 
- 		  datacheck = 0;
+	   //HAL_Delay(100);
 
- 	  }
    }
-   /* USER CODE END 3 */
  }
 
 /**
@@ -149,11 +360,11 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 15;
+  hcan1.Init.Prescaler = 6;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_12TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_6TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_7TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -167,18 +378,19 @@ static void MX_CAN1_Init(void)
   /* USER CODE BEGIN CAN1_Init 2 */
   CAN_FilterTypeDef canfilterconfig;
 
+  //Giving mask 0 and Id 0 will allow all IDs to pass
   canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
   canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
   canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-  canfilterconfig.FilterIdHigh = 0x446<<5;
+  canfilterconfig.FilterIdHigh = 0;
   canfilterconfig.FilterIdLow = 0;
-  canfilterconfig.FilterMaskIdHigh = 0x446<<5;
+  canfilterconfig.FilterMaskIdHigh = 0x0000;
   canfilterconfig.FilterMaskIdLow = 0x0000;
   canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
   canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
   canfilterconfig.SlaveStartFilterBank = 20;  // how many filters to assign to the CAN1 (master can)
 
-  HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
+ HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
 
   /* USER CODE END CAN1_Init 2 */
 
