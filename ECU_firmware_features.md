@@ -1,6 +1,6 @@
 ## SIMULATOR FIRMWARE FEATURES
 
-1. configure the baudrate of the CAN at 500kb/s
+###1. configure the baudrate of the CAN at 500kb/s
 by setting the parameters as follows: 
 
 #### Prescaler 6, quanta1 6 times, quanta2 7 times
@@ -8,7 +8,7 @@ by setting the parameters as follows:
 ![image](https://user-images.githubusercontent.com/62667666/167127822-bf0330a3-aca4-4627-bfd7-89af6193090f.png)
 
 
-2. configure OBD as in: 
+###2. configure OBD as in: 
    - ATZ
    - ATDP -- should be auto
    - 0100 -- should init the bus communication (wont work if simulator ID is not 7E8)
@@ -17,7 +17,7 @@ by setting the parameters as follows:
 PIDs from: http://www.totalcardiagnostics.com/support/Knowledgebase/Article/View/104/0/obd2-pids-for-programmers-technical
 Wekipedia on PID and DTC enconding: https://en.wikipedia.org/wiki/OBD-II_PIDs#Service_01_PID_03_-_Fuel_system_status
 
-add features as: https://www.microport.com.tw/en/prod/OBD-II-Calibration-Diagnosis-Validation-in-Vehicle-Communication/OBD-II-ECU-Simulator/ECU-Simulator-Standard.html
+add features as in: https://www.microport.com.tw/en/prod/OBD-II-Calibration-Diagnosis-Validation-in-Vehicle-Communication/OBD-II-ECU-Simulator/ECU-Simulator-Standard.html
 
 
 Important: 
