@@ -116,7 +116,7 @@ int main(void)
    TxHeader.DLC = 8;  // data length
    TxHeader.IDE = CAN_ID_STD; //use only std IDE ignore the extended one
    TxHeader.RTR = CAN_RTR_DATA; //std
-   TxHeader.StdId = 0x446;  // ID
+   TxHeader.StdId = 0x446;  // don't forget to change this for receiver
 
     HAL_UART_Transmit(&huart2, "about to enter while loop\n", sizeof("about to enter while loop\n"), 100);
 
