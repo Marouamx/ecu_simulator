@@ -17,8 +17,6 @@ by setting the parameters as follows:
 PIDs from: http://www.totalcardiagnostics.com/support/Knowledgebase/Article/View/104/0/obd2-pids-for-programmers-technical
 Wekipedia on PID and DTC enconding: https://en.wikipedia.org/wiki/OBD-II_PIDs#Service_01_PID_03_-_Fuel_system_status
 
-add features as in: https://www.microport.com.tw/en/prod/OBD-II-Calibration-Diagnosis-Validation-in-Vehicle-Communication/OBD-II-ECU-Simulator/ECU-Simulator-Standard.html
-
 
 FLowChart:
 
@@ -27,3 +25,7 @@ FLowChart:
 
 
 ![image](https://user-images.githubusercontent.com/62667666/166656708-d523614a-dfcb-4ca3-9262-55957ff5777b.png)
+
+
+
+https://www.microport.com.tw/en/prod/OBD-II-Calibration-Diagnosis-Validation-in-Vehicle-Communication/OBD-II-ECU-Simulator/ECU-Simulator-Standard.html
