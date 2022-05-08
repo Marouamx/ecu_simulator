@@ -59,7 +59,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 	}
 }
-//EXTI interrupt request when user presses the button -> sends the message via CAN
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
 	HAL_UART_Transmit(&huart2, "receiving: \n", sizeof("receiving \n"), 100); //start rec
