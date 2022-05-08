@@ -20,11 +20,10 @@ Wekipedia on PID and DTC enconding: https://en.wikipedia.org/wiki/OBD-II_PIDs#Se
 add features as in: https://www.microport.com.tw/en/prod/OBD-II-Calibration-Diagnosis-Validation-in-Vehicle-Communication/OBD-II-ECU-Simulator/ECU-Simulator-Standard.html
 
 
-Important: 
-
-![image](https://user-images.githubusercontent.com/62667666/166656708-d523614a-dfcb-4ca3-9262-55957ff5777b.png)
-
-
 FLowChart:
 
 ![image](https://user-images.githubusercontent.com/62667666/166743350-3aaaf98e-6891-4add-8b12-f9a22da1087a.png)
+
+
+
+![image](https://user-images.githubusercontent.com/62667666/166656708-d523614a-dfcb-4ca3-9262-55957ff5777b.png)
