@@ -1,6 +1,6 @@
 #include "main.h"
 #include"string.h"
-
+#include<stdlib.h>
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
 
@@ -72,15 +72,15 @@ void engine_coolant_temp() {
 
 }
 void SupportedPID() {
-	// Idk why or how it works but this is the response to 0100 which sets the protocol 2 to OBD
+	//  this is the response to 0100 which sets the protocol 2 to OBD
 			TxData[0] = 0x01;
 			TxData[1] = 0x02;
-			TxData[2] = 0x03;
-			TxData[3] = 0x04;
-			TxData[4] = 0x05;
-			TxData[5] = 0x06;
-			TxData[6] = 0x07;
-			TxData[7] = 0x08;
+			TxData[2] = 0x55;
+			TxData[3] = 0x55;
+			TxData[4] = 0x55;
+			TxData[5] = 0x55;
+			TxData[6] = 0x55;
+			TxData[7] = 0x55;
 
 			HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
 			//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
@@ -98,22 +98,26 @@ void fuel_system_status() {
 		TxData[7] = 0x55;
 
 		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+		//HAL_UART_Transmit(&huart2, , sizeof(TxData), 100);
 
 }
 void engine_load_value() {
 
-	    TxData[0] = 0x03; // length of data + mode
-		TxData[1] = 0x41; // 41 is like mode + 40H
-		TxData[2] = 0x04; // PID replying to
-		TxData[3] = 0x28; // data0
-		TxData[4] = 0x55; // data1
-		TxData[5] = 0x55;
-		TxData[6] = 0x55;
-		TxData[7] = 0x55;
+	int random_number = rand() % 100 + 1;
+	TxData[0] = 0x03; // length of data + mode
+	TxData[1] = 0x41; // 41 is like mode + 40H
+	TxData[2] = 0x04; // PID replying to
+	TxData[3] = random_number; // data0
+	TxData[4] = 0x55; // data1
+	TxData[5] = 0x55;
+	TxData[6] = 0x55;
+	TxData[7] = 0x55;
 
-		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+
+	HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+	memset(buffer,0, sizeof(buffer));
+	sprintf(buffer,"\n Engine load Value Sent: %d %%",random_number);
+	HAL_UART_Transmit(&huart2, buffer, 40, 100);
 
 }
 void fuel_pressure() {
@@ -163,32 +167,41 @@ void engine_rpm() {
 }
 void vehicule_speed() {
 
+		int random_number = rand() % 255;
 	    TxData[0] = 0x03; // length of data + mode
 		TxData[1] = 0x41; // 41 is like mode + 40H
 		TxData[2] = 0x0D; // PID replying to
-		TxData[3] = 0x64; // data0
+		TxData[3] = random_number; // data0
 		TxData[4] = 0x55; // data1
 		TxData[5] = 0x55;
 		TxData[6] = 0x55;
 		TxData[7] = 0x55;
 
 		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+		memset(buffer,0, sizeof(buffer));
+		sprintf(buffer,"\n Vehicle speed Value Sent: %d km/h",random_number);
+		HAL_UART_Transmit(&huart2, buffer, 40, 100);
+
 
 }
 void intake_air_temperature() {
 
+		int random_number =  rand() % (215 + 40 + 1) - 40;
+
 	    TxData[0] = 0x03; // length of data + mode
 		TxData[1] = 0x41; // 41 is like mode + 40H
 		TxData[2] = 0x0F; // PID replying to
-		TxData[3] = 0x00; // data0
+		TxData[3] = random_number; // data0
 		TxData[4] = 0x55; // data1
 		TxData[5] = 0x55;
 		TxData[6] = 0x55;
 		TxData[7] = 0x55;
 
 		HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-		//HAL_UART_Transmit(&huart2, TxData, sizeof(TxData), 100);
+		memset(buffer,0, sizeof(buffer));
+		char ch=248;
+		sprintf(buffer,"\n intake air temperature Value Sent: %d degree C",random_number);
+		HAL_UART_Transmit(&huart2, buffer, 50, 100);
 
 }
 //EXTI interrupt request when user presses the button -> sends the message via CAN
@@ -249,7 +262,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	else recevied_frame.PID =  RxData[2] << 8 | RxData[3]; // shift higher bits
 
 	//next line just for debugging purposes -- print hex directly
-	HAL_UART_Transmit(&huart2, "\nreceiving: \n", sizeof("\nreceiving: \n"), 100); //start rec
+	HAL_UART_Transmit(&huart2, "\n\n\n\nreceiving: \n", sizeof("\nreceiving: \n"), 100); //start rec
 	sprintf(buffer,"%02X %02X %02X %02X %02X %02X %02X %02X", RxData[0], RxData[1], RxData[2], RxData[3], RxData[5], RxData[6], RxData[7], RxData[8]);
 	HAL_UART_Transmit(&huart2, buffer, 32, 100); //print em
 	HAL_UART_Transmit(&huart2, "\n by: ", sizeof("\n by: "), 100); //start rec
@@ -290,7 +303,10 @@ int main(void)
    TxHeader.RTR = CAN_RTR_DATA; //std
    TxHeader.StdId = 0x7E8;  // ID of ECU -- really important
 
-   HAL_UART_Transmit(&huart2, "about to enter while loop\n", sizeof("about to enter while loop\n"), 100);
+   HAL_UART_Transmit(&huart2, "while(1) \n", sizeof("while(1) \n"), 100);
+
+
+   srand(time(NULL));
 
    while (1)
    {
